@@ -1,0 +1,50 @@
+version: '3.7'
+
+services:
+  mongodb:
+    image: mongo:latest
+    restart: always
+    ports:
+      - 27017:27017
+    volumes:
+      - /home/feyishola/Desktop/mydev/ecommerce-test/STORAGE/mongo:/data/db
+    networks:
+      - mynet
+
+  orderapp:
+    build: ./order
+    restart: always
+    networks:
+      - mynet
+  
+  productapp:
+    build: ./products
+    restart: always
+    networks:
+      - mynet
+
+  userapp:
+    build: ./user
+    restart: always
+    networks:
+      - mynet
+
+  mainapp:
+    build: ./web
+    restart: always
+    volumes:
+      - /home/feyishola/Desktop/mydev/ecommerce-test/views:/app/src/views/
+    networks:
+      - mynet
+
+  proxy:
+    image: nginx:alpine
+    ports:
+      - 80:80
+    volumes:
+      - /home/feyishola/Desktop/mydev/ecommerce-test/proxy/nginx.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - mynet
+
+networks:
+  mynet:

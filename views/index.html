@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div style="margin-bottom: 200px;"></div>
+    <div style="width: 150px; height: 150px; margin:0 auto;">
+        <form id="form" method="post" action="/api/v1/users/login">
+            Email: <input type="email" name="email" placeholder="email"><br><br>
+            password: <input type="password" name="password" placeholder="password"><br><br>
+            <button type="submit">Login</button>
+        </form>
+        <div id="error" style="margin-bottom: 30px; margin-top: 30px;color: red; "></div>
+        <i>if you dont have an account, pls click on the register button</i>
+        <button style="background-color: rgba(0, 128, 6, 0.651); font-size: medium;"><a href="users.html">register</a></button>
+
+    </div>
+    
+</body>
+
+<script>
+    window.addEventListener('load',()=>{localStorage.clear()})
+    const submit = (e) => {
+        if (e) e.preventDefault();
+        let form = e.target;
+
+        let ins = form.getElementsByTagName("input");
+
+        let reqBody = {};
+
+        for (let i = 0; i < ins.length; i++) {
+            const elem = ins[i];
+            reqBody[elem.getAttribute("name")] = elem.value;
+        }
+
+        console.log("ReqBody", reqBody);
+        fetch('/api/v1/users/login', { method: "POST", body: JSON.stringify(reqBody), headers: { 'Content-Type': 'application/json; charset=UTF-8' } }).then(async (result) => {
+            let response = await result.json();
+            console.log("testing",response)
+            let {msg,user} = response
+            if(!user){
+                let errorMsg = document.getElementById('error')
+                errorMsg.innerText = msg
+            }else{
+                let {userCategory,userName} = user
+                console.log('login',response);
+                location.replace("home.html")
+                localStorage.setItem("orderDetails",`${JSON.stringify({userCategory,userName})}`)
+            }})
+        .catch((err) => {
+            console.log("Error", err);
+        });
+        return false;
+    }
+
+    let form = document.getElementById("form");
+    if (form) {
+        form.addEventListener('submit', submit);
+    }
+
+</script>
+
+</html>

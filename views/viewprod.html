@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <nav style="background-color: rgba(57, 133, 123, 0.546); padding:20px;  width: 500px">
+        <span style="margin: 10px;"><button><a href="admin.html">Admin index</a></button></span>
+    </nav>
+
+    <h3>view products</h3>
+    
+    <button type="submit" onclick="getProducts()">click</button>
+    <div id="products"></div>
+
+    <script>
+         async function getProducts(){
+             let result = await fetch('http://localhost/api/v1/products')
+             let response = await result.json()
+             let {allProducts} = response
+
+             let list = document.getElementById('products')
+            
+            let myProducts = allProducts.map((prod)=>{
+                return `
+                    <div>
+                        <ul>
+                            <li>Product Name: ${prod.name}</li>
+                            <li>Category: ${prod.category}</li>
+                            <li>Quantity: ${prod.quantity}</li>
+                            <li>Price: ${prod.price}</li>
+                        </ul>
+                    </div>
+                    `
+            })
+
+            list.innerHTML = myProducts
+        }
+
+    </script>
+</body>
+</html>
+

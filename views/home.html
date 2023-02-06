@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div style="width: 700px; ">
+        <h1 style="text-align:center">Home page</h1>
+        <nav style="background-color: rgba(57, 133, 123, 0.546); padding:30px;  width: 700px">
+            <span style="margin: 10px;"><button><a href="admin.html">admin</a></button></span>
+            <span style="margin: 10px;"><button><a href="users.html">users</a></button></span>
+            <span style="margin: 10px;"><button><a href="order.html">cart
+                        <script>document.write(localStorage.getItem('noItems') || '')</script>
+                    </a></button></span>
+            <span style="margin: 10px;"><button onclick="emptyCart()"><a href="#empty">Empty cart</a></button></span>
+            <span style="margin: 10px; margin-right: 150px;"><button ><a href="index.html">Log out</a></button></span>
+        </nav>
+    </div>
+
+
+    <h2>Available products</h2>
+
+    <!-- <button onclick="getProducts()">get Available products</button> -->
+    <div>
+        <ul id="product"></ul><span id="alert"></span>
+    </div>
+
+    <script>
+        window.addEventListener('load', () => { getProducts();})
+        
+        async function getProducts() {
+
+            let products = await fetch('http://localhost/api/v1/products')
+            let result = await products.json()
+
+            let myProducts = {}
+            myProducts.product = [result]
+            localStorage.setItem("allProducts", JSON.stringify(myProducts))
+            const ul = document.getElementById('product')
+            const alert = document.getElementById("alert")
+            
+            result.allProducts.map(product => {
+
+                const listItem = document.createElement('li')
+                const btns = document.createElement('input')
+                btns.type = "submit"
+                btns.value = "Add to cart"
+                btns.id = product._id
+                alert.innerText = product.quantity === 1 ? "only one item left" : ""
+                alert.style.color = "red"
+                btns.addEventListener("click", () => { addToCart(product); })
+                listItem.innerText = product.name
+                listItem.appendChild(btns)
+                listItem.appendChild(alert)
+                ul.appendChild(listItem)
+            });
+
+            function selected() {
+                console.log(this.id);
+                let productId = this.id;
+                localStorage.setItem("productId", productId)
+            }
+        }
+
+        let type = localStorage.getItem('orderDetails')
+        type = JSON.parse(type).userCategory;
+        let btns = document.getElementsByTagName('button')
+
+        if (type == 'customer') {
+            btns[0].remove()
+            btns[0].remove()
+
+        }else{
+            btns[1].remove()
+            btns[1].remove()
+            btns[1].remove()
+        }
+
+        const addToCart = (product) => {
+            let cart = localStorage.getItem("cart");
+            cart = cart ? JSON.parse(cart) : [];
+            cart.push(product);
+            localStorage.setItem("cart", JSON.stringify(cart));
+            localStorage.setItem("noItems", cart.length.toString());
+            window.location.replace('home.html');
+        }
+
+        const emptyCart = () => {
+            localStorage.setItem("cart", '[]');
+            localStorage.setItem("noItems", '');
+            window.location.replace('home.html');
+        }
+
+    </script>
+</body>
+
+</html>

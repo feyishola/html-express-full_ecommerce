@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <nav style="background-color: rgba(57, 133, 123, 0.546); padding:20px;  width: 500px">
+        <span style="margin: 10px;"><button><a href="admin.html">Admin index</a></button></span>
+    </nav>
+    
+    <h3>view all users</h3>
+
+    <button type="submit" onclick="getUsers()">view users</button>
+    
+    <div id="listofUsers" style="margin-bottom: 50px;"></div>
+
+    <div>
+        <form id="form">
+            <input type="text" name="userId" placeholder="userId of user to be deleted" id="input">
+            <button type="submit">delete a user</button>
+        </form>
+    </div>
+
+    <script>
+          // to view all users
+          async function getUsers(){
+            let users =  await fetch('http://localhost/api/v1/users')
+            let response = await users.json()
+            let {allUsers} = response
+            
+            let list = document.getElementById('listofUsers')
+            let myList = allUsers.map((user)=>{
+                return `
+                <div>
+                    <ul>
+                        <li>UserId: ${user._id}</li>
+                        <li>Name: ${user.userName}</li>
+                        <li>Category: ${user.userCategory}</li>
+                        <li>Address: ${user.address}</li>
+                    </ul>
+                </div>
+                `
+            })
+            
+
+            list.innerHTML = myList
+        }
+
+        // To delete a user
+
+        async function deleteUser(e){
+            document.addEventListener('submit', ()=>{elem.value = null})
+            if(e) e.preventDefault()
+            let form = e.target
+            let elem = document.getElementById('input')
+            let reqBody = {}
+
+            reqBody[elem.getAttribute("name")] = elem.value
+            
+
+            let reqToUser = await fetch(`http://localhost/api/v1/users/${elem.value}`,{method:"DELETE" ,headers:{'Content-Type':'application/json'} })
+            let response = await reqToUser.json()
+            console.log("testing", response);
+
+
+            if(response.msg){
+                alert("User deleted!!!")
+            }else if(response.error){
+                alert("failed to delete user!!")
+            }
+            return false
+        }
+
+        let form = document.getElementById('form')
+        if(form){
+            form.addEventListener('submit',deleteUser)
+        }
+    </script>
+</body>
+</html>
