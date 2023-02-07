@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>checkout Page!!!</h1>
+    <h3>customer's Name: <span id="name"></span></h3>
+    <p>Lists of products ordered</p>
+    <div id="products">
+
+    </div>
+    <button onclick="confirmOrder()">buy product</button>
+    <br>
+    <br>
+
+    <button><a href="home.html">back to home page</a></button>
+
+
+    <script>
+
+        window.addEventListener('load', getOrders);
+
+        async function getOrders() {
+            console.log('Loading');
+
+            let customerDetails = localStorage.getItem('orderDetails')
+            let {userName} = JSON.parse(customerDetails)
+            let name = document.getElementById('name')
+            name.innerText = userName;
+
+            let products = localStorage.getItem('cart');
+            if (!products || products === '[]') {
+                alert('Cart is empty');
+                // window.location.replace('home.html');
+            }
+            products = JSON.parse(products);
+
+            let elements = [];
+
+            for (let i = 0; i < products.length; i++) {
+                products[i].quantity = 1;
+                elements.push(`
+                    <div>
+                        <p>${products[i].name}</p>
+                        <p>Quantity: ${products[i].quantity}</p>
+                        <p>#${products[i].price}</p>
+                    </div>
+                `);
+            }
+
+            let body = document.getElementById('products')
+            body.innerHTML = elements.join("\n");
+        }
+
+        async function confirmOrder() {
+            let productDetails = localStorage.getItem('cart')
+            let userDetails = localStorage.getItem('orderDetails')
+
+            productDetails = JSON.parse(productDetails || '[]');
+            if (productDetails.length == 1) {
+                let [obj] = productDetails;
+                let { category, name, price, _id } = obj
+                
+                let { userCategory, userName } = JSON.parse(userDetails)
+                // console.log(userCategory,userName);
+                let body = {
+                    customerName: userName,
+                    userId: _id,
+                    productCategory: category,
+                    product: name,
+                    quantity: 1,
+                    totalPrice: price
+                }
+                // if(body){
+                //     alert("testing")
+                //     let test = localStorage.getItem("allProducts")
+                //     console.log("testing123", JSON.parse(test) );
+                // }
+
+                fetch('/api/v1/order/', { method: 'POST', body: JSON.stringify(body), headers: { 'Content-Type': 'application/json; charset=UTF-8' } }).then(async (res) => {
+
+                    let result = await res.json()
+
+                    alert("processing order...")
+
+                    setTimeout(()=>{
+                        alert("selected item bought")
+                    },1000)
+                    
+                }).catch((err) => {
+                    console.log(err);
+                })
+            } else {
+                let productsInCart = productDetails;
+                let { userCategory, userName } = JSON.parse(userDetails)
+                // console.log(userCategory,userName);
+                console.log("checking ptoduct id",);
+                let products = productsInCart.map((p) => {
+                    const { category, name, price, _id } = p;
+                    return {
+                        productCategory: _id,
+                        product: name,
+                        quantity: 1,
+                        totalPrice: price
+                    };
+                });
+
+                let body = {
+                    customerName: userName,
+                    userId: userCategory,
+                    products
+                }
+
+                fetch('/api/v1/order/bulkorder', { method: 'POST', body: JSON.stringify(body), headers: { 'Content-Type': 'application/json; charset=UTF-8' } }).then(async (res) => {
+                    let result = await res.json()
+                    alert("selected items bought")
+                }).catch((err) => {
+                    console.log(err);
+                })
+            }
+        }
+    </script>
+</body>
+
+</html>
+
+
+
+<!-- // let productId;
+// window.addEventListener('load', () => {
+//     const urlParams = new URLSearchParams(window.location.search);
+//      productId = urlParams.get('productId');
+//      console.log(productId);
+// }) -->

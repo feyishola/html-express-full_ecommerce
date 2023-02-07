@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <!-- <h1>Products Page!!!</h1> -->
+    <div style="width: 700px; ">
+        <h1 style="text-align:center">Admin's Privileges</h1>
+        <nav style="background-color: rgba(57, 133, 123, 0.546); padding:30px;  width: 700px">
+            <span style="margin: 10px;"><button><a href="admin.html">create Products</a></button></span>
+            <span style="margin: 10px;"><button><a href="viewusers.html">view users</a></button></span>
+            <span style="margin: 10px;"><button><a href="viewprod.html">view products</a></button></span>
+            <span style="margin: 10px;"><button><a href="vieworders.html">view orders</a></button></span>
+        </nav>
+    </div>
+
+    <h3>create products</h3>
+
+    <form method="post" id="form" action="http://localhost/api/v1/products">
+        <input type="text" name="name" placeholder="product name"><br><br>
+        <input type="text" name="category" placeholder="product category"><br><br>
+        <input type="text" name="quantity" placeholder="quantity"><br><br>
+        <input type="text" name="price" placeholder="price"><br><br>
+        <button type="submit">create product</button>
+    </form>
+
+    <div style="margin-bottom: 50px;"></div>
+
+    <button><a href="index.html">index page</a></button>
+
+
+
+
+    <script>
+        
+        const submit = (e)=>{
+            
+            if(e) e.preventDefault()
+            let form = e.target;
+            let elem;
+            let inputTags = form.getElementsByTagName('input')
+            let reqBody = {};
+
+            for(let i = 0; i < inputTags.length; i++){
+                elem = inputTags[i]
+                reqBody[elem.getAttribute('name')] = elem.value
+            }
+            // document.addEventListener('submit', ()=>{inputTags.value = null})
+            console.log('reqBody',reqBody);
+
+            fetch('http://localhost/api/v1/products', {method:'POST', body:JSON.stringify(reqBody), headers:{'Content-Type':'application/json; charset=UTF-8'}}).then(async(result)=>{
+                let response = await result.json()
+                console.log('response',response);
+                // localStorage.setItem('aboutProduct',JSON.stringify(response))
+                alert("product created!")
+            }).catch((err)=>{
+                console.log('err',err);
+            })
+            return false;
+        }
+
+        let form = document.getElementById('form')
+        if(form){
+            form.addEventListener('submit',submit)
+        }
+
+      
+
+
+    // get all products
+   
+     
+    </script>
+</body>
+</html>
+

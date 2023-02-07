@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <nav style="background-color: rgba(57, 133, 123, 0.546); padding:20px;  width: 500px">
+        <span style="margin: 10px;"><button><a href="admin.html">Admin index</a></button></span>
+    </nav>
+
+    <h3>view orders</h3>
+    
+    <button type="submit" onclick="getOrder()">view orders</button>
+    
+    <div id="listofOrders"></div>
+
+    <script>
+            // get order
+    async function getOrder(){
+            try {
+                let result = await fetch('http://localhost/api/v1/order')
+                let response = await result.json()
+                // console.log(response);
+                let {allOrders} = response
+            
+            let list = document.getElementById('listofOrders')
+            let myList = allOrders.map((order, index)=>{
+                return `
+                <div>
+                    <span>${index+1}</span>
+                    <ul>
+                        <li>customerName: ${order.customerName}</li>
+                        <li>productCategory: ${order.productCategory}</li>
+                        <li>productName: ${order.product}</li>
+                        <li>quantity: ${order.quantity}</li>
+                        <li>totalPrice: ${order.totalPrice}</li>
+                    </ul>
+                </div>
+                `
+            })
+            
+            list.innerHTML = myList
+
+        } catch (error) {
+            console.log('response');
+        }
+    
+        }
+        
+    </script>
+</body>
+</html>

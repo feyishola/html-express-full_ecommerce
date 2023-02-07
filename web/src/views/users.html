@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Users Page!!!</h1>
+    
+    <div id="left" style="margin-left:30%;">
+        <h3>register as a user</h3>
+
+    <form method="post" id="form" action="/api/v1/users">
+        Name: <input type="text" name="userName" placeholder="name"><br><br>
+        Email: <input type="email" name="email" placeholder="email"><br><br>
+        Category: <input type="text" name="userCategory" placeholder="user category"><br><br>
+        Address: <input type="text" name="address" placeholder="address"><br><br>
+        Password: <input type="password" name="password" placeholder="password"><br><br>
+        <button type="submit">create user</button>
+    </form>
+
+    <div id="test" style="margin-bottom: 30px;"></div>
+        <i> If you have an account already, pls sign in</i>
+        <button style="background-color: rgba(0, 128, 6, 0.651); font-size: medium;"><a href="index.html">sign in</a></button>
+    </div>    
+    
+    
+<script>
+    function submit(e){
+        if(e) e.preventDefault()
+        let form = e.target;
+
+        let inputs = form.getElementsByTagName("input")
+
+        let reqBody = {}
+
+        for(let i = 0; i < inputs.length; i++){
+            let elem = inputs[i]
+            reqBody[elem.getAttribute("name")] = elem.value
+        }
+        console.log('reqBody',reqBody);
+        fetch("/api/v1/users",{method:"POST",body:JSON.stringify(reqBody), headers: { 'Content-Type': 'application/json; charset=UTF-8' }}).then(async(res)=>{
+            let result = await res.json()
+            console.log("response",result)
+            alert("user created!!!");
+            window.location.replace("index.html")
+        }).catch((err)=>{
+            alert("Error occurred creating user!!!");
+            console.log(err);
+        })
+
+        return false;
+    }
+
+    let form = document.getElementById("form")
+    if(form){
+        form.addEventListener('submit',submit)
+    }
+</script>
+
+</body>
+</html>
+

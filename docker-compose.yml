@@ -33,7 +33,7 @@ services:
     build: ./web
     restart: always
     volumes:
-      - /home/feyishola/Desktop/mydev/ecommerce-test/views:/app/src/views/
+      - /home/feyishola/Desktop/mydev/Back-END/ecommerce-test/web/src/views:/app/src/views/
     networks:
       - mynet
 
@@ -42,7 +42,7 @@ services:
     ports:
       - 80:80
     volumes:
-      - /home/feyishola/Desktop/mydev/ecommerce-test/proxy/nginx.conf:/etc/nginx/conf.d/default.conf
+      - /home/feyishola/Desktop/mydev/Back-END/ecommerce-test/proxy/nginx.conf:/etc/nginx/conf.d/default.conf
     networks:
       - mynet
 
